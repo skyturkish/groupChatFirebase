@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:group_chat_app_firebase/core/constants/navigation/navigation_constants.dart';
 import 'package:group_chat_app_firebase/core/extension/context_extension.dart';
 import 'package:group_chat_app_firebase/product/widget/textFormField/auth_textformfield.dart';
+import 'package:group_chat_app_firebase/view/_product/_mixin/isLoading.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -11,7 +12,7 @@ class RegisterView extends StatefulWidget {
   State<RegisterView> createState() => RegisterViewState();
 }
 
-class RegisterViewState extends State<RegisterView> {
+class RegisterViewState extends State<RegisterView> with LoadingProcess {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _passwordController;
   late final TextEditingController _emailController;
@@ -23,6 +24,14 @@ class RegisterViewState extends State<RegisterView> {
     _passwordController = TextEditingController();
     _emailController = TextEditingController();
     _fullNameController = TextEditingController();
+  }
+
+  register() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        changeLoading();
+      });
+    }
   }
 
   @override
@@ -52,7 +61,7 @@ class RegisterViewState extends State<RegisterView> {
                       labelText: "fullName",
                       controller: _fullNameController,
                       validator: (value) {
-                        return value!.isEmpty ? "Name cannot be empty" : " ";
+                        return value!.isEmpty ? "Name cannot be empty" : null;
                       },
                     ),
                   ),
@@ -84,7 +93,7 @@ class RegisterViewState extends State<RegisterView> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Theme.of(context).primaryColor,
+                          primary: isLoading ? Colors.grey : Theme.of(context).primaryColor,
                           elevation: 0,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
                       child: const Text(
@@ -120,6 +129,4 @@ class RegisterViewState extends State<RegisterView> {
       ),
     );
   }
-
-  register() {}
 }
